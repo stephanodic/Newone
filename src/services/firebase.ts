@@ -4,12 +4,13 @@ import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCVfLP71tkORtgT632w7R_i4UuGsyacivM",
-  authDomain: "moneytracknew-fixed-9196-c6eea.firebaseapp.com",
-  projectId: "moneytracknew-fixed-9196-c6eea",
-  storageBucket: "moneytracknew-fixed-9196-c6eea.firebasestorage.app",
-  messagingSenderId: "992616087106",
-  appId: "1:992616087106:web:c0b454064adf1d6282b7db",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
 const app = initializeApp(firebaseConfig);
