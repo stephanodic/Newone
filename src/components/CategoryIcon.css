@@ -1,0 +1,17 @@
+.cat-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.cat-icon.fluent-icon {
+  filter: drop-shadow(0 3px 5px rgba(15,26,23,0.18));
+}
+.cat-icon.letter-icon {
+  border-radius: 50%;
+  color: white;
+  font-weight: 900;
+  font-size: 0.55em; /* relativo a width via container — usa font-size esplicito */
+  text-transform: uppercase;
+  filter: drop-shadow(0 2px 3px rgba(15,26,23,0.15));
+}

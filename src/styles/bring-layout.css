@@ -1,0 +1,41 @@
+.bring-grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
+  gap: 12px;
+}
+
+.bring-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #64748B;
+  margin-bottom: 12px;
+  padding-left: 4px;
+}
+
+.dark .bring-section-title {
+  color: #94A3B8;
+}
+
+.bring-card {
+  background-color: white;
+  border-radius: 20px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.dark .bring-card {
+  background-color: #1E293B; /* slate-800 */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.bring-card-bought {
+  background-color: #F8FAFC;
+  padding: 16px;
+  border-radius: 20px;
+  margin-bottom: 16px;
+}
+
+.dark .bring-card-bought {
+  background-color: #161e2c;
+}

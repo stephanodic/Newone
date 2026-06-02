@@ -1,0 +1,95 @@
+{
+  "entities": {
+    "Transaction": {
+      "title": "Transaction",
+      "description": "A financial transaction (income or expense)",
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "number",
+          "description": "Positive amount of the transaction"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["INCOME", "EXPENSE"],
+          "description": "Type of transaction"
+        },
+        "category": {
+          "type": "string",
+          "description": "Category name"
+        },
+        "note": {
+          "type": "string",
+          "description": "Optional note"
+        },
+        "date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 date string"
+        },
+        "userId": {
+          "type": "string",
+          "description": "The user ID of the owner"
+        },
+        "createdAt": {
+          "type": "object",
+          "description": "Server timestamp"
+        },
+        "isRecurring": {
+          "type": "boolean",
+          "description": "Whether the transaction repeats"
+        },
+        "recurrenceInterval": {
+          "type": "string",
+          "enum": ["NONE", "DAILY", "WEEKLY", "MONTHLY"],
+          "description": "How often the transaction repeats"
+        },
+        "parentId": {
+          "type": "string",
+          "description": "ID of the source recurring transaction"
+        }
+      },
+      "required": ["amount", "type", "category", "date", "userId", "createdAt"]
+    },
+    "Category": {
+      "title": "Category",
+      "description": "A collection of transactions",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "emoji": {
+          "type": "string"
+        },
+        "color": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["INCOME", "EXPENSE"]
+        },
+        "monthlyLimit": {
+          "type": "number"
+        },
+        "tag": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "string"
+        }
+      },
+      "required": ["name", "emoji", "color", "type", "userId"]
+    }
+  },
+  "firestore": {
+    "users/{userId}/transactions/{transactionId}": {
+      "schema": "Transaction",
+      "description": "User's financial transactions"
+    },
+    "users/{userId}/categories/{categoryId}": {
+      "schema": "Category",
+      "description": "User's custom categories"
+    }
+  }
+}

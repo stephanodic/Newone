@@ -1,0 +1,136 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+         Floating-emoji chip — contorno grigio via text-shadow stratificato
+         Usato in ListaSpesaTab: suggestion chips + icon picker grid + item emoji
+         ───────────────────────────────────────────────────────────────────────────── */
+
+/* Chip grande (36px+) — suggestion chips e icon picker */
+.floating-emoji {
+  text-shadow:
+    -1.5px -1.5px 0 rgba(100, 116, 139, 0.45),
+     1.5px -1.5px 0 rgba(100, 116, 139, 0.45),
+    -1.5px  1.5px 0 rgba(100, 116, 139, 0.45),
+     1.5px  1.5px 0 rgba(100, 116, 139, 0.45),
+    -1.5px  0     0 rgba(100, 116, 139, 0.45),
+     1.5px  0     0 rgba(100, 116, 139, 0.45),
+     0    -1.5px  0 rgba(100, 116, 139, 0.45),
+     0     1.5px  0 rgba(100, 116, 139, 0.45);
+  filter: drop-shadow(0 2px 3px rgba(15, 26, 23, 0.18)) saturate(1.1);
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+/* Chip piccola (20-24px) — emoji nella lista */
+.floating-emoji-sm {
+  text-shadow:
+    -1px -1px 0 rgba(100, 116, 139, 0.35),
+     1px -1px 0 rgba(100, 116, 139, 0.35),
+    -1px  1px 0 rgba(100, 116, 139, 0.35),
+     1px  1px 0 rgba(100, 116, 139, 0.35);
+  filter: drop-shadow(0 1px 2px rgba(15, 26, 23, 0.1)) saturate(1.1);
+}
+
+/* Stato selezionato/attivo: scala e ombra più marcata */
+.is-selected .floating-emoji,
+.is-active .floating-emoji {
+  transform: scale(1.12);
+  filter: drop-shadow(0 3px 6px rgba(15, 26, 23, 0.22)) saturate(1.2);
+}
+
+/* Dark mode: contorno più chiaro per non sparire su surface scure */
+.dark .floating-emoji,
+.dark .floating-emoji-sm {
+  text-shadow:
+    -1.5px -1.5px 0 rgba(148, 163, 184, 0.5),
+     1.5px -1.5px 0 rgba(148, 163, 184, 0.5),
+    -1.5px  1.5px 0 rgba(148, 163, 184, 0.5),
+     1.5px  1.5px 0 rgba(148, 163, 184, 0.5),
+    -1.5px  0     0 rgba(148, 163, 184, 0.5),
+     1.5px  0     0 rgba(148, 163, 184, 0.5),
+     0    -1.5px  0 rgba(148, 163, 184, 0.5),
+     0     1.5px  0 rgba(148, 163, 184, 0.5);
+}
+
+.dark .floating-emoji-sm {
+  text-shadow:
+    -1px -1px 0 rgba(148, 163, 184, 0.4),
+     1px -1px 0 rgba(148, 163, 184, 0.4),
+    -1px  1px 0 rgba(148, 163, 184, 0.4),
+     1px  1px 0 rgba(148, 163, 184, 0.4);
+}
+
+.floating-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  background: none;
+  border: none;
+  padding: 4px;
+  transition: transform 0.12s;
+}
+.floating-chip:active { transform: scale(0.88); }
+
+.floating-chip .ico {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  line-height: 1;
+  background: transparent;
+  border: none;
+  position: relative;
+  transition: transform 0.15s, filter 0.15s;
+}
+
+.floating-chip.is-selected .ico {
+  transform: scale(1.12);
+  filter: drop-shadow(0 3px 6px rgba(15,26,23,0.22)) saturate(1.2);
+}
+
+.floating-chip .badge {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #1D9E75;
+  border: 2px solid #F5F5F0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 9px;
+  font-weight: 900;
+  z-index: 2;
+}
+.floating-chip.is-selected .badge { display: flex; }
+
+.dark .floating-chip .badge {
+  border-color: #0F172A; /* slate-900 */
+}
+
+.floating-chip .lbl {
+  font-size: 10px;
+  font-weight: 600;
+  color: #8C9590;
+  text-align: center;
+  line-height: 1.2;
+  transition: color 0.15s, font-weight 0.15s;
+}
+
+.floating-chip.is-selected .lbl {
+  font-weight: 800;
+  color: #0F1A17;
+}
+
+.dark .floating-chip .lbl {
+  color: #94A3B8; /* slate-400 */
+}
+.dark .floating-chip.is-selected .lbl {
+  color: #F5F5F0;
+}

@@ -1,0 +1,90 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Design-system tokens — MoneyTrack
+   Importato da src/main.tsx; processato da @tailwindcss/vite.
+   Dark mode: class="dark" su <html> (via UIContext → document.documentElement)
+   ───────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* Scala tipografica */
+  --text-display: 1.625rem;      /* 26px — hero number (balance, brand) */
+  --text-title:   1.0625rem;     /* 17px */
+  --text-body:    0.875rem;      /* 14px */
+  --text-caption: 0.75rem;       /* 12px */
+  --text-micro:   0.5625rem;     /* 9px  — solo chip/tag/label secondarie */
+
+  /* Pesi */
+  --fw-regular:  400;
+  --fw-medium:   500;
+  --fw-semibold: 600;
+  --fw-bold:     700;
+
+  /* Altezze di riga */
+  --lh-tight:  1.15;
+  --lh-snug:   1.35;
+  --lh-normal: 1.5;
+
+  /* Spaziatura lettere */
+  --ls-display: -0.02em;
+  --ls-tight:   -0.01em;
+  --ls-normal:  0;
+  --ls-label:   0.08em;
+
+  /* Brand */
+  --brand-500: #1D9E75;
+  --brand-400: #11cc98;
+  --brand-grad: linear-gradient(135deg, var(--brand-500), var(--brand-400));
+
+  /* Semantici */
+  --income:  #1D9E75;
+  --expense: #E24B4A;
+  --warning: #B8860B;
+  --info:    #0EA5E9;
+
+  /* Surface / ink (cambiano in dark mode) */
+  --bg:          #F5F5F0;
+  --surface:     #FFFFFF;
+  --surface-alt: #FAFAF5;
+  --line:        #E3E3DA;
+  --ink:         #0F1A17;
+  --ink-muted:   #5A6661;
+  --ink-subtle:  #8C9590;
+}
+
+/* Dark mode — aggiunto da UIContext con document.documentElement.classList */
+.dark {
+  --bg:          #0F172A;
+  --surface:     #1E293B;
+  --surface-alt: #334155;
+  --line:        #334155;
+  --ink:         #F1F5F9;
+  --ink-muted:   #94A3B8;
+  --ink-subtle:  #64748B;
+}
+
+/* Tinte categoria dinamiche — impostare --cat via style={{ '--cat': color }} */
+.cat-bg     { background: color-mix(in oklch, var(--cat) 18%, transparent); }
+.cat-fg     { color: var(--cat); }
+.cat-border { border-color: var(--cat); }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Tailwind v4 — @theme inline
+   "inline" = Tailwind emette var(--…) nelle utility invece del valore risolto,
+   rendendo i token compatibili con il dark-mode CSS-native.
+   ───────────────────────────────────────────────────────────────────────────── */
+@theme inline {
+  /* Font sizes → text-display, text-title, text-body, text-caption, text-micro */
+  --font-size-display: var(--text-display);
+  --font-size-title:   var(--text-title);
+  --font-size-body:    var(--text-body);
+  --font-size-caption: var(--text-caption);
+  --font-size-micro:   var(--text-micro);
+
+  /* Colors → text-ink, text-ink-muted, bg-surface, border-line, … */
+  --color-ink:         var(--ink);
+  --color-ink-muted:   var(--ink-muted);
+  --color-ink-subtle:  var(--ink-subtle);
+  --color-surface:     var(--surface);
+  --color-surface-alt: var(--surface-alt);
+  --color-line:        var(--line);
+  --color-brand:       var(--brand-500);
+}

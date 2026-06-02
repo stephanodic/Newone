@@ -1,0 +1,181 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Helpers ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // FIX: isVerified() era troppo restrittivo con Google OAuth.
+    // Google OAuth marca sempre email_verified=true, ma alcuni provider
+    // (email/password senza verifica) possono bloccare tutto.
+    // Usiamo isSignedIn() + un check esplicito su Google provider.
+    function isVerifiedOrGoogle() {
+      return isSignedIn() && (
+        request.auth.token.email_verified == true ||
+        request.auth.token.firebase.sign_in_provider == 'google.com'
+      );
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // --- Specific Validators ---
+
+    function isValidTransaction(data) {
+      return data.amount is number && data.amount > 0
+          && data.type in ['INCOME', 'EXPENSE']
+          && data.category is string && data.category.size() > 0 && data.category.size() <= 50
+          && (data.note == null || (data.note is string && data.note.size() <= 500))
+          && data.date is string && data.date.size() > 0
+          && data.userId == request.auth.uid;
+      // NOTA: createdAt == request.time è verificato esplicitamente solo in create
+    }
+
+    function isValidCategory(data) {
+      return data.name is string && data.name.size() > 0 && data.name.size() <= 50
+          && data.emoji is string && data.emoji.size() <= 50
+          && data.color is string && data.color.matches('^#[0-9A-Fa-f]{6}$')
+          && data.type in ['INCOME', 'EXPENSE']
+          && (data.monthlyLimit == null || data.monthlyLimit is number)
+          && (data.tag == null || (data.tag is string && data.tag.size() <= 50))
+          && data.userId == request.auth.uid;
+    }
+
+    // --- Rules ---
+
+    match /users/{userId} {
+      allow get:            if isOwner(userId);
+      allow create, update: if isOwner(userId);  // create: nuovo utente invitato senza doc preesistente
+
+      match /transactions/{transactionId} {
+        allow list: if isOwner(userId);
+        allow get: if isOwner(userId);
+        allow create: if isOwner(userId) && isVerifiedOrGoogle() && isValidTransaction(incoming())
+                      && incoming().createdAt == request.time && isValidId(transactionId);
+        allow update: if isOwner(userId) && isVerifiedOrGoogle() && isValidTransaction(incoming())
+                      && incoming().userId == existing().userId
+                      && incoming().createdAt == existing().createdAt;
+        allow delete: if isOwner(userId) && isVerifiedOrGoogle();
+      }
+
+      match /categories/{categoryId} {
+        allow list: if isOwner(userId);
+        allow get: if isOwner(userId);
+        allow create: if isOwner(userId) && isVerifiedOrGoogle() && isValidCategory(incoming()) && isValidId(categoryId);
+        allow update: if isOwner(userId) && isVerifiedOrGoogle() && isValidCategory(incoming())
+                      && incoming().userId == existing().userId;
+        allow delete: if isOwner(userId) && isVerifiedOrGoogle();
+      }
+    }
+
+    // Wallet-level helpers (functions defined inside the wallets match)
+    match /wallets/{walletId} {
+      function walletDoc() {
+        return get(/databases/$(database)/documents/wallets/$(walletId));
+      }
+      function isWalletMember() {
+        return isSignedIn() && request.auth.uid in resource.data.members;
+      }
+      function isWalletMemberReq() {
+        return isSignedIn() && request.auth.uid in walletDoc().data.members;
+      }
+      function isValidWalletTransaction(data) {
+        return data.amount is number && data.amount > 0
+            && data.type in ['INCOME', 'EXPENSE']
+            && data.category is string && data.category.size() > 0 && data.category.size() <= 50
+            && (data.note == null || (data.note is string && data.note.size() <= 500))
+            && data.date is string && data.date.size() > 0
+            && data.userId is string && data.userId in walletDoc().data.members;
+      }
+      function isValidWalletCategory(data) {
+        return data.name is string && data.name.size() > 0 && data.name.size() <= 50
+            && data.emoji is string && data.emoji.size() <= 50
+            && data.color is string && data.color.matches('^#[0-9A-Fa-f]{6}$')
+            && data.type in ['INCOME', 'EXPENSE']
+            && (data.monthlyLimit == null || data.monthlyLimit is number)
+            && (data.tag == null || (data.tag is string && data.tag.size() <= 50))
+            && data.userId is string && data.userId in walletDoc().data.members;
+      }
+
+      // Un invitato (email in pendingInvites) può leggere e aggiornare il wallet
+      // per poter accettare l'invito (aggiungere se stesso a members).
+      function isInvited() {
+        return isSignedIn() && request.auth.token.email in resource.data.pendingInvites;
+      }
+      allow get:    if isWalletMember() || isInvited();
+      allow list:   if false;
+      allow create: if isSignedIn()
+                    && request.auth.uid == request.resource.data.ownerId
+                    && request.auth.uid in request.resource.data.members;
+      allow update: if isWalletMember() || isInvited();
+      allow delete: if false;
+
+      match /transactions/{txId} {
+        allow list, get: if isWalletMemberReq();
+        allow create:    if isWalletMemberReq()
+                         && isValidWalletTransaction(request.resource.data)
+                         && request.resource.data.createdAt == request.time;
+        allow update:    if isWalletMemberReq()
+                         && isValidWalletTransaction(request.resource.data)
+                         && request.resource.data.userId == resource.data.userId
+                         && request.resource.data.createdAt == resource.data.createdAt;
+        allow delete:    if isWalletMemberReq();
+      }
+
+      match /categories/{catId} {
+        allow list, get: if isWalletMemberReq();
+        allow create:    if isWalletMemberReq() && isValidWalletCategory(request.resource.data);
+        allow update:    if isWalletMemberReq()
+                         && isValidWalletCategory(request.resource.data)
+                         && request.resource.data.userId == resource.data.userId;
+        allow delete:    if isWalletMemberReq();
+      }
+
+      match /shoppingList/{itemId} {
+        allow list, get: if isWalletMemberReq();
+        allow create:    if isWalletMemberReq()
+                         && request.resource.data.name is string
+                         && request.resource.data.name.size() > 0
+                         && request.resource.data.name.size() <= 100
+                         && (request.resource.data.quantity == null
+                             || (request.resource.data.quantity is string
+                                 && request.resource.data.quantity.size() <= 30))
+                         && (request.resource.data.icon == null
+                             || (request.resource.data.icon is string
+                                 && request.resource.data.icon.size() <= 10))
+                         && request.resource.data.bought is bool
+                         && request.resource.data.addedBy == request.auth.uid;
+        allow update:    if isWalletMemberReq();
+        allow delete:    if isWalletMemberReq();
+      }
+    }
+
+    // Invite docs: readable only by the invited email address
+    match /invites/{email} {
+      allow get:    if isSignedIn() && request.auth.token.email == email;
+      allow create, update: if isSignedIn();
+      allow delete: if isSignedIn()
+                    && (request.auth.token.email == email
+                        || resource.data.ownerUid == request.auth.uid);
+    }
+  }
+}

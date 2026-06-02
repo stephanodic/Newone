@@ -1,0 +1,74 @@
+{
+  "name": "MoneyTrack",
+  "short_name": "MoneyTrack",
+  "description": "Traccia entrate e uscite.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1D9E75",
+  "theme_color": "#1D9E75",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": [
+    "finance",
+    "productivity"
+  ],
+  "id": "/",
+  "shortcuts": [
+    {
+      "name": "Aggiungi spesa",
+      "short_name": "Aggiungi",
+      "description": "Apre il form per aggiungere una spesa rapidamente",
+      "url": "/?action=add-expense",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Vedi saldo",
+      "short_name": "Saldo",
+      "description": "Apre la Dashboard con il saldo aggiornato",
+      "url": "/?action=dashboard",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-1.png",
+      "sizes": "1440x2432",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Dashboard"
+    },
+    {
+      "src": "/screenshot-2.png",
+      "sizes": "1440x2432",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Lista"
+    },
+    {
+      "src": "/screenshot-3.png",
+      "sizes": "1440x2432",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Categorie"
+    }
+  ]
+}

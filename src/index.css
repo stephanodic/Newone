@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+@variant dark (&:where(.dark, .dark *));
+
+/* Blocca il pull-to-refresh nativo del browser e l'overscroll elastico */
+html, body {
+  overscroll-behavior: none;
+  overscroll-behavior-y: none;
+}
+
+@utility no-scrollbar {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+

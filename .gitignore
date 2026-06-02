@@ -1,0 +1,15 @@
+node_modules/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+.vercel
+.env*.local
+dist
+app_completa*.txt
+backup_sorgente.txt
+layout_block.txt
+.claude/PR*.md
+.claude/CHEATSHEET.md
+app_completa.md
